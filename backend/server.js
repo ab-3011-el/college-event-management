@@ -11,20 +11,31 @@ app.use(express.json());
 
 // ─── Database Connection ───────────────────────────────────────────────────────
 const db = mysql.createPool({
-  host:               process.env.DB_HOST,
-  user:               process.env.DB_USER,
-  password:           process.env.DB_PASSWORD,
-  database:           process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+
   waitForConnections: true,
-  connectionLimit:    10,
+  connectionLimit: 10,
+  queueLimit: 0,
+  connectTimeout: 60000,
 });
+
+console.log("DB_HOST:", process.env.DB_HOST);
+console.log("DB_PORT:", process.env.DB_PORT);
+console.log("DB_USER:", process.env.DB_USER);
+console.log("DB_NAME:", process.env.DB_NAME);
 
 db.getConnection((err, conn) => {
   if (err) {
-    console.error('❌ Database connection failed:', err.message);
+    console.error("❌ Database connection failed");
+    console.error(err);
     process.exit(1);
   }
-  console.log('✅ Connected to MySQL database');
+
+  console.log("✅ Connected to MySQL database");
   conn.release();
 });
 
